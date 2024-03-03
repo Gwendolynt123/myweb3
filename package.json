@@ -1,5 +1,5 @@
 {
-  "name": "myweb32",
+  "name": "myweb3",
   "version": "1.0.0",
   "description": "",
   "license": "ISC",
@@ -8,5 +8,18 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gwendolynt123/myweb3.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/Gwendolynt123/myweb3/issues"
+  },
+  "homepage": "https://github.com/Gwendolynt123/myweb3#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "hardhat": "^2.26.2"
   }
 }
