@@ -6,6 +6,8 @@ contract SimpleContract {
     address public owner;
     
     event ValueUpdated(uint256 newValue);
+    event ValueIncremented(uint256 newValue);
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     
     constructor() {
         owner = msg.sender;
@@ -20,5 +22,20 @@ contract SimpleContract {
     
     function getValue() public view returns (uint256) {
         return value;
+    }
+    
+    function incrementValue() public {
+        require(msg.sender == owner, "Only owner can increment value");
+        value += 1;
+        emit ValueIncremented(value);
+    }
+    
+    function transferOwnership(address newOwner) public {
+        require(msg.sender == owner, "Only owner can transfer ownership");
+        require(newOwner != address(0), "New owner cannot be zero address");
+        
+        address previousOwner = owner;
+        owner = newOwner;
+        emit OwnershipTransferred(previousOwner, newOwner);
     }
 }
