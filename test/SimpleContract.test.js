@@ -134,6 +134,94 @@ describe("SimpleContract", function () {
     });
   });
 
+  describe("Decrement Value", function () {
+    it("Should allow owner to decrement value", async function () {
+      await simpleContract.setValue(5);
+      
+      await expect(simpleContract.decrementValue())
+        .to.emit(simpleContract, "ValueDecremented")
+        .withArgs(4);
+      
+      expect(await simpleContract.getValue()).to.equal(4);
+    });
+
+    it("Should not allow non-owner to decrement value", async function () {
+      await simpleContract.setValue(5);
+      
+      await expect(
+        simpleContract.connect(otherAccount).decrementValue()
+      ).to.be.revertedWith("Only owner can decrement value");
+    });
+
+    it("Should not allow decrement below zero", async function () {
+      expect(await simpleContract.getValue()).to.equal(0);
+      
+      await expect(
+        simpleContract.decrementValue()
+      ).to.be.revertedWith("Value cannot be decremented below zero");
+    });
+
+    it("Should decrement to zero correctly", async function () {
+      await simpleContract.setValue(1);
+      
+      await expect(simpleContract.decrementValue())
+        .to.emit(simpleContract, "ValueDecremented")
+        .withArgs(0);
+      
+      expect(await simpleContract.getValue()).to.equal(0);
+      
+      // Should not be able to decrement further
+      await expect(
+        simpleContract.decrementValue()
+      ).to.be.revertedWith("Value cannot be decremented below zero");
+    });
+  });
+
+  describe("Reset Value", function () {
+    it("Should allow owner to reset value", async function () {
+      await simpleContract.setValue(100);
+      
+      await expect(simpleContract.resetValue())
+        .to.emit(simpleContract, "ValueReset")
+        .withArgs(100);
+      
+      expect(await simpleContract.getValue()).to.equal(0);
+    });
+
+    it("Should not allow non-owner to reset value", async function () {
+      await simpleContract.setValue(50);
+      
+      await expect(
+        simpleContract.connect(otherAccount).resetValue()
+      ).to.be.revertedWith("Only owner can reset value");
+    });
+
+    it("Should reset value from zero", async function () {
+      expect(await simpleContract.getValue()).to.equal(0);
+      
+      await expect(simpleContract.resetValue())
+        .to.emit(simpleContract, "ValueReset")
+        .withArgs(0);
+      
+      expect(await simpleContract.getValue()).to.equal(0);
+    });
+
+    it("Should allow operations after reset", async function () {
+      await simpleContract.setValue(25);
+      await simpleContract.resetValue();
+      
+      expect(await simpleContract.getValue()).to.equal(0);
+      
+      // Should be able to set value after reset
+      await simpleContract.setValue(10);
+      expect(await simpleContract.getValue()).to.equal(10);
+      
+      // Should be able to increment after reset
+      await simpleContract.incrementValue();
+      expect(await simpleContract.getValue()).to.equal(11);
+    });
+  });
+
   describe("View Functions", function () {
     it("Should return correct value via getValue function", async function () {
       await simpleContract.setValue(999);
