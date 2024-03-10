@@ -8,6 +8,8 @@ contract SimpleContract {
     event ValueUpdated(uint256 newValue);
     event ValueIncremented(uint256 newValue);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    event ValueDecremented(uint256 newValue);
+    event ValueReset(uint256 previousValue);
     
     constructor() {
         owner = msg.sender;
@@ -37,5 +39,19 @@ contract SimpleContract {
         address previousOwner = owner;
         owner = newOwner;
         emit OwnershipTransferred(previousOwner, newOwner);
+    }
+    
+    function decrementValue() public {
+        require(msg.sender == owner, "Only owner can decrement value");
+        require(value > 0, "Value cannot be decremented below zero");
+        value -= 1;
+        emit ValueDecremented(value);
+    }
+    
+    function resetValue() public {
+        require(msg.sender == owner, "Only owner can reset value");
+        uint256 previousValue = value;
+        value = 0;
+        emit ValueReset(previousValue);
     }
 }
